@@ -11,14 +11,25 @@ def list_tasks(status: str | None = None, q: str | None = None) -> list[dict[str
     tasks = load_tasks()
     filtered: list[dict[str, Any]] = []
 
+    # Normalize the status parameter to a string value. FastAPI may pass an
+    # Enum (TaskStatus) or a plain string, so handle both cases.
+    status_str: str | None = None
+    if status is not None:
+        status_str = getattr(status, "value", str(status))
+
     for task in tasks:
-        # Instructor note: intentional bug for the lab.
-        # This uses the literal string "status" instead of the query parameter value.
-        if status and task["status"] != "status":
+        if status_str and task["status"] != status_str:
             continue
 
-        # Instructor note: partial feature for the lab.
-        # The route already accepts `q`, but search is not implemented yet.
+        # If a search query was provided, do a case-insensitive check across
+        # title and description and skip non-matching tasks.
+        if q:
+            q_lower = q.lower()
+            title = task.get("title", "") or ""
+            desc = task.get("description", "") or ""
+            if q_lower not in title.lower() and q_lower not in desc.lower():
+                continue
+
         filtered.append(task)
 
     return filtered
@@ -53,12 +64,10 @@ def complete_task(task_id: int) -> dict[str, Any] | None:
 
     for task in tasks:
         if task["id"] == task_id:
-            updated_task = dict(task)
-            updated_task["status"] = "done"
-            updated_task["completed_at"] = datetime.now(timezone.utc).isoformat()
-
-            # Instructor note: intentional bug for the lab.
-            # The updated task is returned, but the stored list is never updated or saved.
-            return updated_task
+            # Update the task in-place and persist the change.
+            task["status"] = "done"
+            task["completed_at"] = datetime.now(timezone.utc).isoformat()
+            save_tasks(tasks)
+            return task
 
     return None

@@ -102,6 +102,24 @@ cd CodexLab
 
 ### 2. Ask Codex to create and activate a virtual environment
 
+Use the commands that match your shell.
+
+Windows PowerShell:
+
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+```
+
+If PowerShell blocks script execution, use:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy Bypass
+.\.venv\Scripts\Activate.ps1
+```
+
+macOS / Linux / Git Bash:
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
