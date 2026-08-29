@@ -21,10 +21,10 @@
     "id": 3,
     "title": "Plan workshop agenda",
     "description": "Outline topics for the partner onboarding session.",
-    "status": "open",
+    "status": "done",
     "priority": "medium",
     "created_at": "2026-02-27T11:45:00+00:00",
-    "completed_at": null
+    "completed_at": "2026-08-29T20:32:13.080972+00:00"
   },
   {
     "id": 4,
